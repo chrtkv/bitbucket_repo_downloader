@@ -87,7 +87,7 @@ def pull(repo, paths):
 
             print('Pulling {}'.format(repo['name']))
             try:
-                local_repo.remotes.origin.pull()
+                local_repo.remotes.origin.pull('--rebase')
                 print('Done')
             except Exception:
                 return '{} — failed'.format(path)
