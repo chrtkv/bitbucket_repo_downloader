@@ -72,7 +72,7 @@ def clone(repo, paths):
             git.Repo.clone_from(
                 repo['link'],
                 path,
-                env={'GIT_SSH_COMMAND': 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ./.ssh/{}'.format(
+                env={'GIT_SSH_COMMAND': 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /downloader/.ssh/{}'.format(
                     os.environ['bitbucket_ssh_key_name']
                 )},
             )
