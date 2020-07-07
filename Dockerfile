@@ -9,11 +9,6 @@ WORKDIR /downloader
 
 COPY pyproject.toml poetry.lock downloader.py /downloader/
 
-# RUN mkdir -p /downloader/.ssh
-# ADD id_rsa /downloader/.ssh/id_rsa
-# RUN chmod 700 /downloader/.ssh/id_rsa
-# RUN echo "Host bitbucket.com\n\tStrictHostKeyChecking no\n" >> /downloader/.ssh/config
-
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
 
