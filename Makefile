@@ -1,6 +1,3 @@
-BIN := ~/.local/bin/hexdownloader
-
-
 build:
 		docker build -t hexdownloader:latest .
 
