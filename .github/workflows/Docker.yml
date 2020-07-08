@@ -6,21 +6,17 @@ on:
       - master
       - env_version
 
-env:
-  IMAGE_NAME: hexdownloader:latest
-
 jobs:
   push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Build image
-        run: docker build -t $IMAGE_NAME .
+        run: docker build -t docker.pkg.github.com/melodyn/bitbucket_repo_downloader/hexdownloader:latest .
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
       - name: Push image
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
-          docker push $IMAGE_ID
+          docker push docker.pkg.github.com/melodyn/bitbucket_repo_downloader/hexdownloader:latest
