@@ -78,7 +78,6 @@ def clone(repo, paths):
             )
             print('Done')
             return time.sleep(1)
-        # print('Already exists')
 
 
 def pull(repo, paths):
@@ -101,16 +100,16 @@ def pull(repo, paths):
 
 def main(params=None):
     url = '{}{}'.format(os.environ['bitbucket_api_url'], os.environ['bitbucket_team_name'])
-    cur_dir = os.getcwd()
+    cur_dir = 'repos/'
     cred_bytes = ('{}:{}'.format(
         os.environ['bitbucket_username'],
         os.environ['bitbucket_app_password'],
     ).encode('utf-8'))
     credentials = str(base64.b64encode(cred_bytes), 'utf-8')
     paths = {
-        'exercise': '{}/courses'.format(cur_dir),
+        'exercise': '{}courses'.format(cur_dir),
         'course': cur_dir,
-        'challenge': '{}/challenges'.format(cur_dir),
+        'challenge': '{}challenges'.format(cur_dir),
     }
 
     if '--update' in params:
