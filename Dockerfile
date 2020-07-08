@@ -14,4 +14,4 @@ RUN poetry config virtualenvs.create false \
 
 RUN chmod a+x ./downloader.py
 
-#ENTRYPOINT ["./downloader.py"]
+ENTRYPOINT ["./downloader.py"]
