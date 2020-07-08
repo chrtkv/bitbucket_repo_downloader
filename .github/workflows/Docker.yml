@@ -40,6 +40,8 @@ jobs:
           registry: docker.pkg.github.com
 #          username: ${{ secrets.DOCKER_USERNAME }}
 #          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
           tags: latest
 #      - name: Set fail Slack env vars
 #        if: ${{ failure() }}
