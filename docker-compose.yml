@@ -1,0 +1,10 @@
+---
+
+version: "3.8"
+services:
+  hexdownloader:
+    build: .
+    image: hexdownloader
+    working_dir: /repos
+    volumes:
+      - $PWD:/repos

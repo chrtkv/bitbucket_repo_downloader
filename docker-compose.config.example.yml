@@ -1,0 +1,16 @@
+---
+
+version: "3.8"
+services:
+  hexdownloader:
+    secrets:
+      - id_rsa
+    environment:
+      BITBUCKET_USERNAME: username # not email
+      BITBUCKET_APP_PASSWORD: apppassword # generate on: https://bitbucket.org/account/settings/app-passwords/
+      BITBUCKET_TEAM_NAME: hexlet # or your team name
+      BITBUCKET_API_URL: https://api.bitbucket.org/2.0/repositories/ # or link on local network
+
+secrets:
+  id_rsa:
+    file: $HOME/.ssh/id_rsa # path to your private ssh key (id_rsa - default value)

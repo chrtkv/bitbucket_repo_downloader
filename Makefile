@@ -1,17 +1,21 @@
+@CURRENT_USER="$(shell id -u):$(shell id -g)"
+
 build:
-	docker build -t hexdownloader:latest .
+	docker-compose build
+
+#как запускать от текущего пользователя?
+#run:
+#	CURRENT_USER=$(CURRENT_USER) docker-compose \
+#		-f docker-compose.yml -f docker-compose.config.yml \
+#		run hexdownloader
 
 run:
-	docker run -it --rm --name hexdownloader \
-		-v $(CURDIR):/downloader/repos \
-		-v $(HOME)/.ssh:/downloader/.ssh:ro \
-		--env-file ./.env \
-		hexdownloader:latest
+	docker-compose \
+		-f docker-compose.yml -f docker-compose.config.yml \
+		run hexdownloader
 
-update_run:
-	docker run -it --rm --name hexdownloader \
-		-v $(CURDIR):/downloader/repos \
-		-v $(HOME)/.ssh:/downloader/.ssh:ro \
-		--env-file ./.env \
-		hexdownloader:latest --update
+run_update:
+	docker-compose \
+		-f docker-compose.yml -f docker-compose.config.yml \
+		run hexdownloader --update
 

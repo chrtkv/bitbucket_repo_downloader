@@ -72,9 +72,7 @@ def clone(repo, paths):
             git.Repo.clone_from(
                 repo['link'],
                 path,
-                env={'GIT_SSH_COMMAND': 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /downloader/.ssh/{}'.format(
-                    os.environ['bitbucket_ssh_key_name']
-                )},
+                env={'GIT_SSH_COMMAND': 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /run/secrets/id_rsa'},
             )
             print('Done')
             return time.sleep(1)
@@ -99,11 +97,11 @@ def pull(repo, paths):
 
 
 def main(params=None):
-    url = '{}{}'.format(os.environ['bitbucket_api_url'], os.environ['bitbucket_team_name'])
-    cur_dir = 'repos/'
+    url = '{}{}'.format(os.environ['BITBUCKET_API_URL'], os.environ['BITBUCKET_TEAM_NAME'])
+    cur_dir = '/repos/'
     cred_bytes = ('{}:{}'.format(
-        os.environ['bitbucket_username'],
-        os.environ['bitbucket_app_password'],
+        os.environ['BITBUCKET_USERNAME'],
+        os.environ['BITBUCKET_APP_PASSWORD'],
     ).encode('utf-8'))
     credentials = str(base64.b64encode(cred_bytes), 'utf-8')
     paths = {
