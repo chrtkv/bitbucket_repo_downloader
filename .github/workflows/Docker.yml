@@ -11,30 +11,33 @@ on:
 #  REGISTRY_NAME: hexletbasics
 
 jobs:
-  build-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run test build
-        run: |
-          docker-compose build
+#  build-test:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Run test build
+#        run: |
+#          docker-compose build
 
   build-push-notify:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
-    needs: build-test
+#    needs: build-test
     steps:
       - uses: actions/checkout@v2
 #      - name: Set repository name
 #        run: |
 #          echo ::set-env name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')
 
+      - name: Read Docker Image Identifiers
+        run: echo ::set-env name=IMAGE_REPOSITORY::$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
+
       - name: Build and push into docker hub
         uses: docker/build-push-action@v1.1.0
         with:
 #          repository: ${{ env.REGISTRY_NAME }}/${{ env.REPOSITORY_NAME }}
-          repository: docker.pkg.github.com/${{ env.GITHUB_REPOSITORY }}/hexdownloader
           registry: docker.pkg.github.com
+          repository: ${{ env.IMAGE_REPOSITORY }}/hexdownloader
 #          username: ${{ secrets.DOCKER_USERNAME }}
 #          password: ${{ secrets.DOCKER_PASSWORD }}
           username: ${{ github.actor }}
