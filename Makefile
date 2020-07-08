@@ -1,9 +1,17 @@
 build:
-		docker build -t hexdownloader:latest .
+	docker build -t hexdownloader:latest .
 
 run:
 	docker run -it --rm --name hexdownloader \
-		-v $(CURDIR):/repos \
+		-v $(CURDIR):/downloader/repos \
 		-v $(HOME)/.ssh:/downloader/.ssh:ro \
 		--env-file ./.env \
-		hexdownloader:latest /bin/bash
+		hexdownloader:latest
+
+update_run:
+	docker run -it --rm --name hexdownloader \
+		-v $(CURDIR):/downloader/repos \
+		-v $(HOME)/.ssh:/downloader/.ssh:ro \
+		--env-file ./.env \
+		hexdownloader:latest --update
+
