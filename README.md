@@ -1,5 +1,7 @@
 # bitbucket_repo_downloader
 
+[![Github Actions Status](../../workflows/Docker/badge.svg)](../../actions)
+
 Download all repositories from the Bitbucket account
 
 ## Requirements
