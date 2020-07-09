@@ -2,54 +2,43 @@ name: Docker
 
 on:
   push:
-    branches: [ master, env_version ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
 env:
-#  # TODO: Change variable to your registry.
-#  REGISTRY_NAME: hexlet
+  # TODO: Change variable to your registry.
+  REGISTRY_NAME: hexlet
   IMAGE_NAME: bitbucket_downloader
 
 jobs:
-#  build-test:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Run test build
-#        run: |
-#          docker-compose build
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run test build
+        run: |
+          make build
 
   build-push-notify:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
-#    needs: build-test
+    needs: build-test
     steps:
       - uses: actions/checkout@v2
-#      - name: Set repository name
-#        run: |
-#          echo ::set-env name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')
-
-      - name: Read Docker Image Identifiers
-        run: echo ::set-env name=IMAGE_REPOSITORY::$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
-
       - name: Build and push into docker hub
         uses: docker/build-push-action@v1.1.0
         with:
-#          repository: ${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}
-          registry: docker.pkg.github.com
-          repository: ${{ env.IMAGE_REPOSITORY }}/${{ env.IMAGE_NAME }}
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_PASSWORD }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
           tags: latest
-#      - name: Set fail Slack env vars
-#        if: ${{ failure() }}
-#        run: |
-#          echo "::set-env name=SLACK_COLOR::#a30200"
-#      - name: Send notification into Slack
-#        if: ${{ always() }}
-#        uses: rtCamp/action-slack-notify@v2.0.0
-#        env:
-#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      - name: Set fail Slack env vars
+        if: ${{ failure() }}
+        run: |
+          echo "::set-env name=SLACK_COLOR::#a30200"
+      - name: Send notification into Slack
+        if: ${{ always() }}
+        uses: rtCamp/action-slack-notify@v2.0.0
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
