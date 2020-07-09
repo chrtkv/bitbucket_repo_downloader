@@ -1,21 +1,42 @@
-@CURRENT_USER="$(shell id -u):$(shell id -g)"
+IMAGE_NAME=hexlet/bitbucket_downloader
+CURRENT_USER=$(shell id -u):$(shell id -g)
+SSH_KEY_PATH?=$(HOME)/.ssh/id_rsa
+UPDATE_FLAG?=
 
 build:
-	docker-compose build
+	docker build -t $(IMAGE_NAME):latest .
 
-#как запускать от текущего пользователя?
-#run:
-#	CURRENT_USER=$(CURRENT_USER) docker-compose \
-#		-f docker-compose.yml -f docker-compose.config.yml \
-#		run hexdownloader
+# development
+dev_build:
+	docker build -t $(IMAGE_NAME):dev -f dev.Dockerfile .
 
-run:
-	docker-compose \
-		-f docker-compose.yml -f docker-compose.config.yml \
-		run hexdownloader
+dev_prepare:
+	docker run --rm -it --name bitbucket_downloader \
+		-v $(CURDIR):/downloader \
+		$(IMAGE_NAME):dev /bin/bash -c "chmod a+x ./downloader.py"
 
-run_update:
-	docker-compose \
-		-f docker-compose.yml -f docker-compose.config.yml \
-		run hexdownloader --update
+dev_clone:
+	docker run --rm -it --name bitbucket_downloader \
+		-u $(CURRENT_USER) \
+		-v /etc/passwd:/etc/passwd:ro \
+		-v $(CURDIR):/repos \
+		-v $(CURDIR):/downloader \
+		-v $(SSH_KEY_PATH):/downloader/.ssh/id_rsa \
+		--env-file ./bitbucket.config.env \
+		$(IMAGE_NAME):dev ./downloader.py $(UPDATE_FLAG)
 
+dev_rebase:
+	make dev_clone UPDATE_FLAG=--update
+
+# usage
+clone:
+	docker run --rm -it --name hexlet/bitbucket-downloader \
+		-u $(CURRENT_USER) \
+		-v /etc/passwd:/etc/passwd:ro \
+		-v $(SSH_KEY_PATH):/downloader/.ssh/id_rsa \
+		-v $(CURDIR):/repos \
+		--env-file ./bitbucket.config.env \
+		docker.pkg.github.com/melodyn/bitbucket_repo_downloader/hexdownloader:latest $(UPDATE_FLAG)
+
+rebase:
+	make clone UPDATE_FLAG=--update

@@ -1,2 +1,5 @@
+.idea/
 __pycache__/
-docker-compose.config.yml
+.ssh/
+*.env
+!bitbucket.config.example.env

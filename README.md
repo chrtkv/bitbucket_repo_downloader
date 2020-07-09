@@ -1,4 +1,4 @@
-# bitbucket_repo_downloader
+# bitbucket_downloader
 
 [![Github Actions Status](../../workflows/Docker/badge.svg)](../../actions)
 
@@ -8,11 +8,14 @@ Download all repositories from the Bitbucket account
 
 * GNU Make >= 4
 * Docker >= 19
-* Docker-compose >= 1.25
+
+## Using
+
+Use it with [hexlet exercise kit](https://github.com/Hexlet/hexlet-exercise-kit)
 
 ## Development
 
-1. Copy *docker-compose.config.example.yml* and paste as *docker-compose.config.yml*.
-2. In *docker-compose.config.example.yml* set your configuration.
-3. Run in terminal `make run` for a download all repositories with courses, exercises and challenges.
-4. Run in terminal `make update_run` for pull updates from repositories to your machine.
+* clone this repo
+* copy *bitbucket.config.example.env* into *bitbucket.config.env* and set your config 
+* `make dev_build dev_prepare` for first time
+* `make dev_clone` or `make dev_rebase` for run code in a container from local machine
