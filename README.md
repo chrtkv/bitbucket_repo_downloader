@@ -1,24 +1,21 @@
-# bitbucket_repo_downloader
+# bitbucket_downloader
+
+[![Github Actions Status](../../workflows/Docker/badge.svg)](../../actions)
 
 Download all repositories from the Bitbucket account
 
 ## Requirements
 
-Docker.
+* GNU Make >= 4
+* Docker >= 19
 
-## Configure
+## Using
 
-1. Rename `.env.example` to `.env`
+Use it with [hexlet exercise kit](https://github.com/Hexlet/hexlet-exercise-kit)
 
-2. Fill `.env` file:
+## Development
 
-- **bitbucket_username** — your Bitbucket username (not email)
-- **bitbucket_app_password** — application password [generated](https://bitbucket.org/account/settings/app-passwords/) for this script. You shouldn't use your actual password.
-
-3. `make build`
-
-## Usage
-
-`make run` — download all repositories with courses, exercises and challenges
-
-`make update_run` — pull updates from repositories to your machine
+* clone this repo
+* copy *bitbucket.config.example.env* into *bitbucket.config.env* and set your config 
+* `make dev_build dev_prepare` for first time
+* `make dev_clone` or `make dev_rebase` for run code in a container from local machine

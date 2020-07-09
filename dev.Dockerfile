@@ -10,6 +10,3 @@ COPY . /downloader
 
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
-RUN chmod a+x ./downloader.py
-
-ENTRYPOINT ["./downloader.py"]
