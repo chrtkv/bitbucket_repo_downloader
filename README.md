@@ -1,25 +1,21 @@
-# bitbucket_repo_downloader
+# bitbucket_downloader
+
+[![Github Actions Status](../../workflows/Docker/badge.svg)](../../actions)
 
 Download all repositories from the Bitbucket account
 
 ## Requirements
 
-Docker.
+* GNU Make >= 4
+* Docker >= 19
 
-## Install
+## Using
 
-1.`make build`
+Use it with [hexlet exercise kit](https://github.com/Hexlet/hexlet-exercise-kit)
 
-2.`make register`
+## Development
 
-## Configure
-
-1.Create an environment variable `HEXLET_EXERCISE_KIT_DIR` with your path to Hexlet exercise kit directory.
-
-2.Move `.hexdownloader` to the home directory and add bitbucket credentials into it. For password you shouldn't use your actual password! You should generate an application password instead. Just create one at your profile's settings page.
-
-## Usage
-
-`hexdownloader` — download all repositories with courses, exercises and challenges
-
-`hexdownloader --update` — pull updates from repositories to your machine
+* clone this repo
+* copy *bitbucket.config.example.env* into *bitbucket.config.env* and set your config 
+* `make dev_build dev_prepare` for first time
+* `make dev_clone` or `make dev_rebase` for run code in a container from local machine

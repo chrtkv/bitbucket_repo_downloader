@@ -72,11 +72,10 @@ def clone(repo, paths):
             git.Repo.clone_from(
                 repo['link'],
                 path,
-                env={'GIT_SSH_COMMAND': 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /.ssh/id_rsa'},
+                env={'GIT_SSH_COMMAND': 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /downloader/.ssh/id_rsa'},
             )
             print('Done')
             return time.sleep(1)
-        # print('Already exists')
 
 
 def pull(repo, paths):
@@ -97,19 +96,18 @@ def pull(repo, paths):
                 return '{} — failed'.format(path)
 
 
-def main(config, params=None):
-    url = '{}{}'.format(config['api_url'], config['team_name'])
+def main(params=None):
+    url = '{}{}'.format(os.environ['BITBUCKET_API_URL'], os.environ['BITBUCKET_TEAM_NAME'])
+    cur_dir = '/repos/'
     cred_bytes = ('{}:{}'.format(
-        config['username'],
-        config['password'],
+        os.environ['BITBUCKET_USERNAME'],
+        os.environ['BITBUCKET_APP_PASSWORD'],
     ).encode('utf-8'))
     credentials = str(base64.b64encode(cred_bytes), 'utf-8')
     paths = {
-        'exercise': '{}courses'.format(os.environ['HEXLET_EXERCISE_KIT_DIR']),
-        'course': os.environ['HEXLET_EXERCISE_KIT_DIR'],
-        'challenge': '{}challenges'.format(
-            os.environ['HEXLET_EXERCISE_KIT_DIR'],
-        ),
+        'exercise': '{}courses'.format(cur_dir),
+        'course': cur_dir,
+        'challenge': '{}challenges'.format(cur_dir),
     }
 
     if '--update' in params:
@@ -133,5 +131,4 @@ if __name__ == '__main__':
         options = sys.argv[1]
     except IndexError:
         options = ''
-    with open('.hexdownloader') as config:
-        main(json.load(config), params=options)
+    main(params=options)
