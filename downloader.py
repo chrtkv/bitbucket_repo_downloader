@@ -5,11 +5,11 @@ import json
 import math
 import os
 import sys
-import time
-
-import requests
 
 import git
+import requests
+
+sys.tracebacklimit = 0
 
 
 def make_request(url, creds, pagelen=1, page=1):
@@ -20,7 +20,10 @@ def make_request(url, creds, pagelen=1, page=1):
         "pagelen": pagelen,
         "page": page,
     }
-    return requests.get(url, headers=headers, params=querystring)
+    response = requests.get(url, headers=headers, params=querystring)
+    if response.status_code != 200:
+        raise ConnectionError("Check your credentials!\n")
+    return response
 
 
 def get_repos_quantity(url, creds):
@@ -72,10 +75,8 @@ def clone(repo, paths):
             git.Repo.clone_from(
                 repo['link'],
                 path,
-                env={'GIT_SSH_COMMAND': 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /downloader/.ssh/id_rsa'},
             )
             print('Done')
-            return time.sleep(1)
 
 
 def pull(repo, paths):
@@ -83,7 +84,11 @@ def pull(repo, paths):
         parent_dir = paths[repo['type']]
         path = '{}/{}/{}'.format(parent_dir, repo['dir'], repo['name'])
         if os.path.exists(path):
-            local_repo = git.Repo(path)
+            try:
+                local_repo = git.Repo(path)
+            except Exception:
+                return '{} — failed'.format(path)
+
             changed_files = local_repo.index.diff(None)
             if changed_files:
                 return '{} — has changes'.format(path)

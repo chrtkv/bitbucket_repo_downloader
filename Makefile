@@ -1,6 +1,5 @@
 IMAGE_NAME=hexlet/bitbucket_downloader
 CURRENT_USER=$(shell id -u):$(shell id -g)
-SSH_KEY_PATH?=$(HOME)/.ssh/id_rsa
 UPDATE_FLAG?=
 
 build:
@@ -20,8 +19,7 @@ dev_clone:
 		-u $(CURRENT_USER) \
 		-v /etc/passwd:/etc/passwd:ro \
 		-v $(CURDIR):/repos \
-		-v $(CURDIR):/downloader \
-		-v $(SSH_KEY_PATH):/downloader/.ssh/id_rsa \
+		-v $(HOME)/.ssh:$(HOME)/.ssh \
 		--env-file ./bitbucket.config.env \
 		$(IMAGE_NAME):dev ./downloader.py $(UPDATE_FLAG)
 
@@ -33,7 +31,7 @@ clone:
 	docker run --rm -it --name hexlet/bitbucket-downloader \
 		-u $(CURRENT_USER) \
 		-v /etc/passwd:/etc/passwd:ro \
-		-v $(SSH_KEY_PATH):/downloader/.ssh/id_rsa \
+		-v $(HOME)/.ssh:$(HOME)/.ssh \
 		-v $(CURDIR):/repos \
 		--env-file ./bitbucket.config.env \
 		docker.pkg.github.com/melodyn/bitbucket_repo_downloader/hexdownloader:latest $(UPDATE_FLAG)
