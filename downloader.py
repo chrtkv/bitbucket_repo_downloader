@@ -2,6 +2,7 @@
 
 import base64
 import json
+import logging
 import math
 import os
 import sys
@@ -9,6 +10,19 @@ import sys
 import git
 import requests
 
+
+if not os.path.exists('/repos/download.log'):
+    with open('/repos/download.log', 'w'):
+        pass
+
+
+logging.basicConfig(
+    filename='/repos/download.log',
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+)
+
+logger = logging.getLogger()
 sys.tracebacklimit = 0
 
 
@@ -72,11 +86,23 @@ def clone(repo, paths):
         if not os.path.exists(path):
             os.makedirs(path, exist_ok=True)
             print('Cloning {}'.format(repo['name']))
-            git.Repo.clone_from(
-                repo['link'],
-                path,
-            )
-            print('Done')
+            try:
+                repo = git.Repo.clone_from(
+                    repo['link'],
+                    path,
+                )
+                logger.info(f'Cloned from {repo.remotes.origin.url} to {repo.working_dir}')
+                print(f'Cloned from {repo.remotes.origin.url} to {repo.working_dir}')
+                return True
+            except Exception as error:
+                logger.error(error)
+                return False
+        else:
+            logger.warning(f'{path} already exists. Repository was skipped')
+            return True
+    else:
+        logger.warning(f"{repo['link']} is not valid type of repo")
+        return True
 
 
 def pull(repo, paths):
@@ -86,19 +112,27 @@ def pull(repo, paths):
         if os.path.exists(path):
             try:
                 local_repo = git.Repo(path)
-            except Exception:
-                return '{} — failed'.format(path)
+            except Exception as error:
+                logger.error(f"Couldn't create a repo object in {path}\n{error}")
+                return False
 
             changed_files = local_repo.index.diff(None)
             if changed_files:
-                return '{} — has changes'.format(path)
+                logger.warning(f'{path} has changes. This repo was not updated')
+                return False
 
-            print('Pulling {}'.format(repo['name']))
+            print(f"Updating {repo['name']}")
             try:
                 local_repo.remotes.origin.pull('--rebase')
-                print('Done')
-            except Exception:
-                return '{} — failed'.format(path)
+                logger.info(f'{path} was updated')
+                print(f'{repo["name"]} was updated')
+                return True
+            except Exception as error:
+                logger.error(f"Couldn\'t update {path}\n{error}")
+                return False
+    else:
+        logger.warning(f"{repo['link']} is not valid type of repo")
+        return True
 
 
 def main(params=None):
@@ -116,19 +150,15 @@ def main(params=None):
     }
 
     if '--update' in params:
-        not_updated = []
         for repo in get_repos_data(url, credentials):
-            # TODO: fixme
-            result = pull(repo, paths)
-            not_updated.append(result)
-        print(
-            'There is the list of not updated repositories:\n{}'.format(
-                '\n'.join(list(filter(None, not_updated))),
-            ),
-        )
+            if not pull(repo, paths):
+                print(f'An error occured with {repo["name"]}. See the log file for more details')
+
     else:
         for repo in get_repos_data(url, credentials):
-            clone(repo, paths)
+            if not clone(repo, paths):
+                print("An error occured. See the log file for more details")
+                break
 
 
 if __name__ == '__main__':
