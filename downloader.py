@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 
 import base64
-import json
 import logging
 import math
 import os
@@ -91,7 +90,6 @@ def clone(repo, paths):
                     repo['link'],
                     path,
                 )
-                logger.info(f'Cloned from {repo.remotes.origin.url} to {repo.working_dir}')
                 print(f'Cloned from {repo.remotes.origin.url} to {repo.working_dir}')
                 return True
             except Exception as error:
@@ -121,10 +119,18 @@ def pull(repo, paths):
                 logger.warning(f'{path} has changes. This repo was not updated')
                 return False
 
+            if not local_repo.branches:
+                logger.warning(f'{path} has no branches. This repo was skipped')
+                return False
+
+            branch_name = local_repo.active_branch.name
+            if 'master' not in branch_name:
+                logger.warning(f'{path} is not in master branch. This repo was not updated')
+                return False
+
             print(f"Updating {repo['name']}")
             try:
                 local_repo.remotes.origin.pull('--rebase')
-                logger.info(f'{path} was updated')
                 print(f'{repo["name"]} was updated')
                 return True
             except Exception as error:
@@ -137,16 +143,16 @@ def pull(repo, paths):
 
 def main(params=None):
     url = '{}{}'.format(os.environ['BITBUCKET_API_URL'], os.environ['BITBUCKET_TEAM_NAME'])
-    cur_dir = '/repos/'
+    cur_dir = '/repos'
     cred_bytes = ('{}:{}'.format(
         os.environ['BITBUCKET_USERNAME'],
         os.environ['BITBUCKET_APP_PASSWORD'],
     ).encode('utf-8'))
     credentials = str(base64.b64encode(cred_bytes), 'utf-8')
     paths = {
-        'exercise': '{}courses'.format(cur_dir),
+        'exercise': '{}/courses'.format(cur_dir),
         'course': cur_dir,
-        'challenge': '{}challenges'.format(cur_dir),
+        'challenge': '{}/challenges'.format(cur_dir),
     }
 
     if '--update' in params:
